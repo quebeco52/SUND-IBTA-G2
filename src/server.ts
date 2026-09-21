@@ -7,6 +7,13 @@ app.use(express.json());
 
 const PORT = 3000;
 
+type Transaction = {
+    id: number;
+    date: string;
+    recipient: string;
+    amount: number;
+};
+
 
 
 app.get("/transactions", (req: Request, res: Response): void => {
@@ -33,7 +40,7 @@ app.post("/transactions", (req: Request, res: Response): void => {
 
     const nextId = transactions.length + 1;
 
-    const newTransaction = {
+    const newTransaction : Transaction = {
         id: nextId,
         date,
         recipient,
