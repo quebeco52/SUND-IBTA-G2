@@ -13,6 +13,16 @@ app.get("/transactions", (req: Request, res: Response): void => {
     res.json(transactions);
 });
 
+app.get("/transactions/:id", (req: Request, res: Response): void => {
+    const id = Number(req.params.id);
+    const transaction = transactions.find((t) => t.id === id);
+    if (transaction) {
+        res.json(transaction);
+    } else {
+        res.status(404).json({ error: "Transaction not found" });
+    }
+});
+
 app.post("/transactions", (req: Request, res: Response): void => {
     const { date, recipient, amount } = req.body;
 
