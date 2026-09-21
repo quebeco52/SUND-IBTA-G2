@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 
 import transactions from "../data/transactions.json" with { type: "json" };
+import classifications from "../data/classifications.json" with { type: "json" };
 
 const app = express();
 app.use(express.json());
@@ -60,6 +61,10 @@ app.delete("/transactions/:id", (req: Request, res: Response): void => {
     } else {
         res.status(404).json({ error: "Transaction not found" });
     }
+});
+
+app.get("/classifications", (req: Request, res: Response): void => {
+    res.json(classifications);
 });
 
 
