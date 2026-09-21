@@ -44,6 +44,16 @@ app.post("/transactions", (req: Request, res: Response): void => {
     res.status(201).json(newTransaction);
 });
 
+app.delete("/transactions/:id", (req: Request, res: Response): void => {
+    const id = Number(req.params.id);
+    const index = transactions.findIndex((t) => t.id === id);
+    if (index !== -1) {
+        transactions.splice(index, 1);
+        res.status(204).send();
+    } else {
+        res.status(404).json({ error: "Transaction not found" });
+    }
+});
 
 
 
