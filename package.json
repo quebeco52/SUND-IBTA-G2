@@ -1,0 +1,28 @@
+{
+  "name": "sund-ibta-g2",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/quebeco52/SUND-IBTA-G2#readme",
+  "bugs": {
+    "url": "https://github.com/quebeco52/SUND-IBTA-G2/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quebeco52/SUND-IBTA-G2.git"
+  },
+  "license": "MIT",
+  "author": "",
+  "type": "module",
+  "main": "src/server.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}
