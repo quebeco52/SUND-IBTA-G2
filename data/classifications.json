@@ -1,0 +1,42 @@
+[
+  {
+    "recipient": "ICA",
+    "classification": "Food"
+  },
+  {
+    "recipient": "SL",
+    "classification": "Transport"
+  },
+  {
+    "recipient": "Systembolaget",
+    "classification": "Alcohol"
+  },
+  {
+    "recipient": "Apoteket Hjärtat",
+    "classification": "Health"
+  },
+  {
+    "recipient": "Telia",
+    "classification": "Telecom"
+  },
+  {
+    "recipient": "H&M",
+    "classification": "Clothing"
+  },
+  {
+    "recipient": "IKEA",
+    "classification": "Furniture"
+  },
+  {
+    "recipient": "Circle K",
+    "classification": "Fuel"
+  },
+  {
+    "recipient": "Max",
+    "classification": "Restaurants"
+  },
+  {
+    "recipient": "Elgiganten",
+    "classification": "Electronics"
+  }
+]

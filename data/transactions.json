@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "date": "2026-09-01",
+    "recipient": "ICA",
+    "amount": -342.5
+  },
+  {
+    "id": 2,
+    "date": "2026-09-02",
+    "recipient": "SL",
+    "amount": -1060
+  },
+  {
+    "id": 3,
+    "date": "2026-09-04",
+    "recipient": "Systembolaget",
+    "amount": -489
+  },
+  {
+    "id": 4,
+    "date": "2026-09-06",
+    "recipient": "Apoteket Hjärtat",
+    "amount": -179.9
+  },
+  {
+    "id": 5,
+    "date": "2026-09-08",
+    "recipient": "Telia",
+    "amount": -399
+  },
+  {
+    "id": 6,
+    "date": "2026-09-10",
+    "recipient": "H&M",
+    "amount": -599
+  },
+  {
+    "id": 7,
+    "date": "2026-09-12",
+    "recipient": "IKEA",
+    "amount": -1295
+  },
+  {
+    "id": 8,
+    "date": "2026-09-14",
+    "recipient": "Circle K",
+    "amount": -812.4
+  },
+  {
+    "id": 9,
+    "date": "2026-09-17",
+    "recipient": "Max",
+    "amount": -189
+  },
+  {
+    "id": 10,
+    "date": "2026-09-19",
+    "recipient": "Elgiganten",
+    "amount": -2490
+  }
+]
