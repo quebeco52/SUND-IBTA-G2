@@ -63,6 +63,28 @@ app.delete("/transactions/:id", (req: Request, res: Response): void => {
     }
 });
 
+
+app.put("/transactions/:id", (req: Request, res: Response): void => {
+    const id = Number(req.params.id);
+    const index = transactions.findIndex((t) => t.id === id);
+    if (index !== -1) {
+        const { date, recipient, amount } = req.body;
+        
+        const updatedTransaction : Transaction = {
+            id,
+            date,
+            recipient,
+            amount,
+        };
+
+        transactions[index] = updatedTransaction;
+        res.json(updatedTransaction);
+    } else {
+        res.status(404).json({ error: "Transaction not found" });
+    }
+});
+
+
 app.get("/classifications", (req: Request, res: Response): void => {
     res.json(classifications);
 });
