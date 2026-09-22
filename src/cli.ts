@@ -43,9 +43,12 @@ async function main() {
       try {
         const response = await fetch(`${base}/transactions/${id}`);
         const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error ?? `Request failed (${response.status})`);
+        }
         console.table(data);
       } catch (error) {
-        console.log(error.message);
+        console.log((error as Error).message);
       }
       break;
     }
