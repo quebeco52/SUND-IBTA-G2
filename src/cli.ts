@@ -90,6 +90,7 @@ async function main() {
         console.log((error as Error).message);
       }
       break;
+    }
 
     case "update": {
       const id = await number({ message: "Transaction id:", required: true });
