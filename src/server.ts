@@ -22,6 +22,11 @@ const bodySchema = z.object({
   amount: z.number().int("Amount must be an integer."),
 });
 
+const dateIntervalSchema = z.object({
+  from: z.iso.date("Invalid from date, expected yyyy-mm-dd."),
+  to: z.iso.date("Invalid to date, expected yyyy-mm-dd."),
+});
+
 app.get("/transactions", (req: Request, res: Response): void => {
   const transactionsWithClassifications = transactions.map((transaction) => {
     const match = classifications.find(
@@ -36,19 +41,18 @@ app.get("/transactions", (req: Request, res: Response): void => {
 });
 
 app.get("/transactions/filterbydate", (req: Request, res: Response): void => {
-  const { from, to } = req.query;
+  const safeDates = dateIntervalSchema.safeParse(req.query);
 
-  if (!from || !to) {
-    res.status(400).json({ error: "Both 'from' and 'to' are required" });
+  if (!safeDates.success) {
+    res.status(400).json({ error: safeDates.error.issues[0].message });
     return;
   }
 
-  const fromDate = new Date(from as string);
-  const toDate = new Date(to as string);
+  const { from, to } = safeDates.data;
 
   const filtered = transactions.filter((t) => {
-    const transactionDate = new Date(t.date);
-    return transactionDate >= fromDate && transactionDate <= toDate;
+    const transactionDate = t.date;
+    return transactionDate >= from && transactionDate <= to;
   });
 
   res.json(filtered);
