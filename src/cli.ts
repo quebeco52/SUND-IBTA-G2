@@ -95,7 +95,18 @@ async function main() {
 
     case "delete": {
       const id = await number({ message: "Transaction id:", required: true });
-      console.log("TODO");
+      try {
+        const response = await fetch(`${base}/transactions/${id}`, {
+          method: "DELETE",
+        });
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.error ?? `Request failed (${response.status})`);
+        }
+        console.log("Transaction deleted");
+      } catch (error) {
+        console.log((error as Error).message);
+      }
       break;
     }
 
