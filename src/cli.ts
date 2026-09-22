@@ -1,4 +1,6 @@
+
 import { input, number, select } from "@inquirer/prompts";
+
 
 const base = "http://localhost:3000";
 
@@ -53,8 +55,40 @@ async function main() {
       break;
     }
 
-    case "add":
-      console.log("TODO");
+    case "add": {
+      const today = new Date().toISOString().split("T")[0];
+      const date = await input({
+        message: "Date (YYYY-MM-DD):",
+        default: today,
+        validate: (val: string) => /^\d{4}-\d{2}-\d{2}$/.test(val) || "Format must be YYYY-MM-DD",
+      });
+
+      const recipient = await input({
+        message: "Recipient:",
+        validate: (val: string) => val.trim().length > 0 || "Cannot be empty",
+      });
+
+      const amount = await number({ message: "Amount:", required: true });
+
+      try {
+        const response = await fetch(`${base}/transactions`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ date, recipient: recipient.trim(), amount }),
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error ?? `Request failed (${response.status})`);
+        }
+
+        console.log("Transaction added successfully:");
+        console.table([data]);
+      } catch (error) {
+        console.log((error as Error).message);
+      }
       break;
 
     case "update": {
