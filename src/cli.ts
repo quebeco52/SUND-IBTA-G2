@@ -1,4 +1,6 @@
-import { number, select } from "@inquirer/prompts";
+import { input, number, select } from "@inquirer/prompts";
+
+const BASE_URL = "http://localhost:3000"; // match the port your server listens on
 
 async function main() {
   console.clear();
@@ -26,12 +28,16 @@ async function main() {
       break;
 
     case "view-all":
-      console.log("TODO");
+      const res = await fetch(`${BASE_URL}/transactions`);
+      const transactions = await res.json();
+      console.table(transactions); // nice formatted output in the terminal
       break;
 
     case "view-one": {
       const id = await number({ message: "Transaction id:", required: true });
-      console.log("TODO");
+      const res = await fetch(`${BASE_URL}/transactions/${id}`);
+      const transaction = await res.json();
+      console.table([transaction]); // nice formatted output in the terminal
       break;
     }
 
@@ -45,18 +51,32 @@ async function main() {
 
     case "delete": {
       const id = await number({ message: "Transaction id:", required: true });
-      console.log("TODO");
+      const res = await fetch(`${BASE_URL}/transactions/${id}`, { method: "DELETE" });
+      console.log("Transaction deleted.");
       break;
     }
 
-    case "filter":
-      console.log("TODO");
+    case "filter": {
+      const from = await input({
+        message: "From date (YYYY-MM-DD):",
+      });
+
+      const to = await input({
+        message: "To date (YYYY-MM-DD):",
+      });
+
+      const res2 = await fetch(
+        `${BASE_URL}/transactions/filterbydate?from=${from}&to=${to}`
+      );
+      const filteredTransactions = await res2.json();
+      console.table(filteredTransactions);
       break;
+    }
   }
 }
 
 try {
   await main();
 } catch (error) {
-  console.log(error.message);
+  console.log(error instanceof Error ? error.message : error);
 }
