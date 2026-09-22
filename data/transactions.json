@@ -3,7 +3,7 @@
     "id": 1,
     "date": "2026-09-01",
     "recipient": "ICA",
-    "amount": -342.5
+    "amount": -342
   },
   {
     "id": 2,
@@ -21,7 +21,7 @@
     "id": 4,
     "date": "2026-09-06",
     "recipient": "Apoteket Hjärtat",
-    "amount": -179.9
+    "amount": -179
   },
   {
     "id": 5,
@@ -45,7 +45,7 @@
     "id": 8,
     "date": "2026-09-14",
     "recipient": "Circle K",
-    "amount": -812.4
+    "amount": -812
   },
   {
     "id": 9,

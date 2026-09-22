@@ -18,7 +18,16 @@ type Transaction = {
 
 
 app.get("/transactions", (req: Request, res: Response): void => {
-    res.json(transactions);
+    const transactionsWithClassifications = transactions.map((transaction) => {
+        const match = classifications.find(
+            (c) => c.recipient === transaction.recipient
+        );
+        return {
+            ...transaction,
+            classification: match ? match.classification : null,
+        };
+    });
+    res.json(transactionsWithClassifications);
 });
 
 app.get("/transactions/filterbydate", (req: Request, res: Response): void => {
