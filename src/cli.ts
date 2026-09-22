@@ -40,7 +40,16 @@ async function main() {
 
     case "view-one": {
       const id = await number({ message: "Transaction id:", required: true });
-      console.log("TODO");
+      try {
+        const response = await fetch(`${base}/transactions/${id}`);
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error ?? `Request failed (${response.status})`);
+        }
+        console.table(data);
+      } catch (error) {
+        console.log((error as Error).message);
+      }
       break;
     }
 
