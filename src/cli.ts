@@ -32,7 +32,11 @@ async function main() {
         try {
           const response = await fetch(base + "/transactions");
           const data = await response.json();
-          console.table(data);
+          const formatted = data.map((t: any) => ({
+            ...t,
+            classification: t.classification ?? "Unknown",
+          }));
+          console.table(formatted);
         } catch (error) {
           console.log((error as Error).message);
         }
@@ -49,7 +53,12 @@ async function main() {
               data.error ?? `Request failed (${response.status})`,
             );
           }
-          console.table(data);
+          console.table([
+            {
+              ...data,
+              classification: data.classification ?? "Unknown",
+            },
+          ]);
         } catch (error) {
           console.log((error as Error).message);
         }
@@ -89,7 +98,12 @@ async function main() {
           }
 
           console.log("Transaction added successfully:");
-          console.table([data]);
+          console.table([
+            {
+              ...data,
+              classification: data.classification ?? "Unknown",
+            },
+          ]);
         } catch (error) {
           console.log((error as Error).message);
         }
@@ -107,7 +121,12 @@ async function main() {
             );
           }
 
-          console.table([data]);
+          console.table([
+            {
+              ...data,
+              classification: data.classification ?? "Unknown",
+            },
+          ]);
 
           const date = await input({
             message: "Date:",
@@ -187,7 +206,11 @@ async function main() {
               filteredTransactions.error ?? `Request failed (${res.status})`,
             );
           }
-          console.table(filteredTransactions);
+          const formatted = filteredTransactions.map((t: any) => ({
+            ...t,
+            classification: t.classification ?? "Unknown",
+          }));
+          console.table(formatted);
         } catch (error) {
           console.log((error as Error).message);
         }

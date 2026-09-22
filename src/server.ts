@@ -14,6 +14,7 @@ type Transaction = {
   date: string;
   recipient: string;
   amount: number;
+  classification?: string | null;
 };
 
 const bodySchema = z.object({
@@ -47,9 +48,9 @@ app.get("/transactions/filterbydate", (req: Request, res: Response): void => {
   const toDate = new Date(to as string);
 
   const filtered = transactions.filter((t) => {
-    const transactionDate = new Date(t.date);
-    return transactionDate >= fromDate && transactionDate <= toDate;
-  });
+      const transactionDate = new Date(t.date);
+      return transactionDate >= fromDate && transactionDate <= toDate;
+    });
 
   res.json(filtered);
 });
@@ -58,7 +59,13 @@ app.get("/transactions/:id", (req: Request, res: Response): void => {
   const id = Number(req.params.id);
   const transaction = transactions.find((t) => t.id === id);
   if (transaction) {
-    res.json(transaction);
+    const match = classifications.find(
+      (c) => c.recipient === transaction.recipient,
+    );
+    res.json({
+      ...transaction,
+      classification: match ? match.classification : null,
+    });
   } else {
     res.status(404).json({ error: "Transaction not found" });
   }
@@ -76,11 +83,16 @@ app.post("/transactions", (req: Request, res: Response): void => {
 
   const nextId = transactions.length + 1;
 
+  const match = classifications.find(
+    (c) => c.recipient === recipient,
+  );
+
   const newTransaction: Transaction = {
     id: nextId,
     date,
     recipient,
     amount,
+    classification: match ? match.classification : null,
   };
 
   transactions.push(newTransaction);
