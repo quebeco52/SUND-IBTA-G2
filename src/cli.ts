@@ -1,4 +1,4 @@
-import { number, select } from "@inquirer/prompts";
+import { input, number, select } from "@inquirer/prompts";
 
 const base = "http://localhost:3000";
 
@@ -48,9 +48,50 @@ async function main() {
       console.log("TODO");
       break;
 
-    case "update":
-      console.log("TODO");
+    case "update": {
+      const id = await number({ message: "Transaction id:", required: true });
+      try {
+        const response = await fetch(`${base}/transactions/${id}`);
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error ?? `Request failed (${response.status})`);
+        }
+
+        console.table([data]);
+
+        const date = await input({
+          message: "Date:",
+          default: data.date,
+          validate: (val: string) => /^\d{4}-\d{2}-\d{2}$/.test(val) || "Format must be YYYY-MM-DD",
+        });
+        const recipient = await input({
+          message: "Recipient:",
+          default: data.recipient,
+        });
+        const amount = await number({
+          message: "Amount:",
+          default: data.amount,
+        });
+
+        const updateResponse = await fetch(`${base}/transactions/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ date, recipient, amount }),
+        });
+        const updateData = await updateResponse.json();
+        if (!updateResponse.ok) {
+          throw new Error(updateData.error ?? `Request failed (${updateResponse.status})`);
+        }
+
+        console.log("Transaction updated");
+      } catch (error) {
+        console.log((error as Error).message);
+      }
       break;
+    }
+
 
     case "delete": {
       const id = await number({ message: "Transaction id:", required: true });
