@@ -30,6 +30,25 @@ app.get("/transactions", (req: Request, res: Response): void => {
     res.json(transactionsWithClassifications);
 });
 
+app.get("/transactions/filterbydate", (req: Request, res: Response): void => {
+  const { from, to } = req.query;
+
+  if (!from || !to) {
+    res.status(400).json({ error: "Both 'from' and 'to' are required" });
+    return;
+  }
+
+  const fromDate = new Date(from as string);
+  const toDate = new Date(to as string);
+
+  const filtered = transactions.filter((t) => {
+    const transactionDate = new Date(t.date);
+    return transactionDate >= fromDate && transactionDate <= toDate;
+  });
+
+  res.json(filtered);
+});
+
 app.get("/transactions/:id", (req: Request, res: Response): void => {
     const id = Number(req.params.id);
     const transaction = transactions.find((t) => t.id === id);

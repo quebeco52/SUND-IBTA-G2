@@ -34,7 +34,7 @@ async function main() {
           const data = await response.json();
           console.table(data);
         } catch (error) {
-          console.log(error.message);
+          console.log((error as Error).message);
         }
         break;
       }
@@ -164,9 +164,35 @@ async function main() {
         break;
       }
 
-      case "filter":
-        console.log("TODO");
+      case "filter": {
+        const from = await input({
+          message: "From date (YYYY-MM-DD):",
+          validate: (val: string) =>
+            /^\d{4}-\d{2}-\d{2}$/.test(val) || "Format must be YYYY-MM-DD",
+        });
+
+        const to = await input({
+          message: "To date (YYYY-MM-DD):",
+          validate: (val: string) =>
+            /^\d{4}-\d{2}-\d{2}$/.test(val) || "Format must be YYYY-MM-DD",
+        });
+
+        try {
+          const res = await fetch(
+            `${base}/transactions/filterbydate?from=${from}&to=${to}`,
+          );
+          const filteredTransactions = await res.json();
+          if (!res.ok) {
+            throw new Error(
+              filteredTransactions.error ?? `Request failed (${res.status})`,
+            );
+          }
+          console.table(filteredTransactions);
+        } catch (error) {
+          console.log((error as Error).message);
+        }
         break;
+      }
     }
 
     await input({ message: "Press Enter to go back to the main menu" });
@@ -176,5 +202,5 @@ async function main() {
 try {
   await main();
 } catch (error) {
-  console.log((error as Error).message);
+  console.log(error instanceof Error ? error.message : error);
 }
