@@ -1,5 +1,7 @@
 import { number, select } from "@inquirer/prompts";
 
+const base = "http://localhost:3000";
+
 async function main() {
   console.clear();
   console.log("╔═══════════════════╗");
@@ -25,9 +27,16 @@ async function main() {
       console.log("Have a nice day. Bye.");
       break;
 
-    case "view-all":
-      console.log("TODO");
+    case "view-all": {
+      try {
+        const response = await fetch(base + "/transactions");
+        const data = await response.json();
+        console.table(data);
+      } catch (error) {
+        console.log(error.message);
+      }
       break;
+    }
 
     case "view-one": {
       const id = await number({ message: "Transaction id:", required: true });
