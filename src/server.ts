@@ -94,18 +94,20 @@ app.post("/transactions", (req: Request, res: Response): void => {
 
   const nextId = transactions.length + 1;
 
-  const match = classifications.find((c) => c.recipient === recipient);
-
   const newTransaction: Transaction = {
     id: nextId,
     date,
     recipient,
     amount,
-    classification: match ? match.classification : null,
   };
-
   transactions.push(newTransaction);
-  res.status(201).json(newTransaction);
+
+  const match = classifications.find((c) => c.recipient === recipient);
+
+  res.status(201).json({
+    ...newTransaction,
+    classification: match ? match.classification : "Unknown",
+  });
 });
 
 app.delete("/transactions/:id", (req: Request, res: Response): void => {
