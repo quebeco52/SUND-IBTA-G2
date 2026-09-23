@@ -18,7 +18,7 @@ async function main() {
         { name: "Add transaction", value: "add" },
         { name: "Update transaction", value: "update" },
         { name: "Delete transaction", value: "delete" },
-        { name: "Filter transaction by date", value: "filter" },
+        { name: "Filter transactions by date", value: "filter" },
         { name: "Exit", value: "exit" },
       ],
     });
