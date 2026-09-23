@@ -32,11 +32,7 @@ async function main() {
         try {
           const response = await fetch(base + "/transactions");
           const data = await response.json();
-          const formatted = data.map((t: any) => ({
-            ...t,
-            classification: t.classification ?? "Unknown",
-          }));
-          console.table(formatted);
+          console.table(data);
         } catch (error) {
           console.log((error as Error).message);
         }
@@ -53,12 +49,7 @@ async function main() {
               data.error ?? `Request failed (${response.status})`,
             );
           }
-          console.table([
-            {
-              ...data,
-              classification: data.classification ?? "Unknown",
-            },
-          ]);
+          console.table(data);
         } catch (error) {
           console.log((error as Error).message);
         }
@@ -216,11 +207,7 @@ async function main() {
             break;
           }
 
-          const formatted = filteredTransactions.map((t: any) => ({
-            ...t,
-            classification: t.classification ?? "Unknown",
-          }));
-          console.table(formatted);
+          console.table(filteredTransactions);
         } catch (error) {
           console.log((error as Error).message);
         }
