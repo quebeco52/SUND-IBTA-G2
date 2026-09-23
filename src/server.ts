@@ -14,7 +14,7 @@ type Transaction = {
   date: string;
   recipient: string;
   amount: number;
-  classification?: string | null;
+  classification?: string;
 };
 
 const bodySchema = z.object({
@@ -63,7 +63,16 @@ app.get("/transactions/filterbydate", (req: Request, res: Response): void => {
     return transactionDate >= from && transactionDate <= to;
   });
 
-  res.json(filtered);
+  const transactionsWithClassifications = filtered.map((transaction) => {
+    const match = classifications.find(
+      (c) => c.recipient === transaction.recipient,
+    );
+    return {
+      ...transaction,
+      classification: match ? match.classification : "Unknown",
+    };
+  });
+  res.json(transactionsWithClassifications);
 });
 
 app.get("/transactions/:id", (req: Request, res: Response): void => {
@@ -75,7 +84,7 @@ app.get("/transactions/:id", (req: Request, res: Response): void => {
     );
     res.json({
       ...transaction,
-      classification: match ? match.classification : null,
+      classification: match ? match.classification : "Unknown",
     });
   } else {
     res.status(404).json({ error: "Transaction not found" });
@@ -94,18 +103,20 @@ app.post("/transactions", (req: Request, res: Response): void => {
 
   const nextId = transactions.length + 1;
 
-  const match = classifications.find((c) => c.recipient === recipient);
-
   const newTransaction: Transaction = {
     id: nextId,
     date,
     recipient,
     amount,
-    classification: match ? match.classification : null,
   };
-
   transactions.push(newTransaction);
-  res.status(201).json(newTransaction);
+
+  const match = classifications.find((c) => c.recipient === recipient);
+
+  res.status(201).json({
+    ...newTransaction,
+    classification: match ? match.classification : "Unknown",
+  });
 });
 
 app.delete("/transactions/:id", (req: Request, res: Response): void => {
@@ -138,7 +149,13 @@ app.put("/transactions/:id", (req: Request, res: Response): void => {
     };
 
     transactions[index] = updatedTransaction;
-    res.json(updatedTransaction);
+
+    const match = classifications.find((c) => c.recipient === recipient);
+
+    res.json({
+      ...updatedTransaction,
+      classification: match ? match.classification : "Unknown",
+    });
   } else {
     res.status(404).json({ error: "Transaction not found" });
   }
