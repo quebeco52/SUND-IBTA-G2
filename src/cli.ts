@@ -184,14 +184,18 @@ async function main() {
       }
 
       case "filter": {
+        const today = new Date().toISOString().split("T")[0];
+
         const from = await input({
           message: "From date (YYYY-MM-DD):",
+          default: today,
           validate: (val: string) =>
             /^\d{4}-\d{2}-\d{2}$/.test(val) || "Format must be YYYY-MM-DD",
         });
 
         const to = await input({
           message: "To date (YYYY-MM-DD):",
+          default: today,
           validate: (val: string) =>
             /^\d{4}-\d{2}-\d{2}$/.test(val) || "Format must be YYYY-MM-DD",
         });
