@@ -62,13 +62,13 @@ Type: GET
 Function: Selects existing transactions between a start date and an end date. Both dates are provided by the user
 ![Banking terminal - Filter transactions](images/filter-transactions-by-date.png "Filter transactions")
 
-7 Exit
+7. Exit
 Closes our bank terminal application
 ----------------------------
 
 Error handling
 We used both regex and the Zod package for error handling to eliminate the chance for data corruption.
-The messages received by the user are user friendly and could look like the images below:
+The messages received by the user are user friendly and look like the following images:
 ![Banking terminal - Error in input data](images/input-error-date-format.png "Error in input data")
 ![Banking terminal - Error in input data](images/input-error-recipient.png "Error in input data")
 
