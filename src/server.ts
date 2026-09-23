@@ -51,6 +51,13 @@ app.get("/transactions/filterbydate", (req: Request, res: Response): void => {
 
   const { from, to } = safeDates.data;
 
+  if (from > to) {
+    res
+      .status(400)
+      .json({ error: "from must be earlier than or equal to 'to'." });
+    return;
+  }
+
   const filtered = transactions.filter((t) => {
     const transactionDate = t.date;
     return transactionDate >= from && transactionDate <= to;
@@ -87,9 +94,7 @@ app.post("/transactions", (req: Request, res: Response): void => {
 
   const nextId = transactions.length + 1;
 
-  const match = classifications.find(
-    (c) => c.recipient === recipient,
-  );
+  const match = classifications.find((c) => c.recipient === recipient);
 
   const newTransaction: Transaction = {
     id: nextId,
