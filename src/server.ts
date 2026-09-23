@@ -140,7 +140,13 @@ app.put("/transactions/:id", (req: Request, res: Response): void => {
     };
 
     transactions[index] = updatedTransaction;
-    res.json(updatedTransaction);
+
+    const match = classifications.find((c) => c.recipient === recipient);
+
+    res.json({
+      ...updatedTransaction,
+      classification: match ? match.classification : "Unknown",
+    });
   } else {
     res.status(404).json({ error: "Transaction not found" });
   }
