@@ -29,7 +29,7 @@ app.get("/transactions", (req: Request, res: Response): void => {
     );
     return {
       ...transaction,
-      classification: match ? match.classification : null,
+      classification: match ? match.classification : "Unknown",
     };
   });
   res.json(transactionsWithClassifications);
