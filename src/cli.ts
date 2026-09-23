@@ -210,6 +210,12 @@ async function main() {
               filteredTransactions.error ?? `Request failed (${res.status})`,
             );
           }
+
+          if (filteredTransactions.length === 0) {
+            console.log("No transactions found within this interval.");
+            break;
+          }
+
           const formatted = filteredTransactions.map((t: any) => ({
             ...t,
             classification: t.classification ?? "Unknown",
