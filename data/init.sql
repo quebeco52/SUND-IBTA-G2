@@ -6,6 +6,9 @@ CREATE TABLE classifications (
     classification  TEXT NOT NULL
 );
 
+CREATE INDEX classifications_classification_idx
+    ON classifications (classification);
+
 CREATE TABLE transactions (
     id                INTEGER PRIMARY KEY,
     transaction_date  DATE NOT NULL,
