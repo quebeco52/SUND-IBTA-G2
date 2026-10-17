@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { pool } from "./db.js";
+import { pool } from "./db.ts";
 import {
   classificationSchema,
   transactionSchema,
@@ -29,7 +29,7 @@ type Classification = {
 // 'yyyy-mm-dd' text and the amount as a number
 const SELECT_TRANSACTIONS = `
   SELECT t.id,
-         to_char(t.date, 'YYYY-MM-DD') AS date,
+         to_char(t.transaction_date, 'YYYY-MM-DD') AS date,
          c.recipient,
          t.amount::float8 AS amount,
          c.classification
@@ -81,7 +81,7 @@ app.get(
 
     try {
       const result = await pool.query<Transaction>(
-        `${SELECT_TRANSACTIONS} WHERE t.date BETWEEN $1 AND $2 ORDER BY t.date, t.id`,
+        `${SELECT_TRANSACTIONS} WHERE t.transaction_date BETWEEN $1 AND $2 ORDER BY t.transaction_date, t.id`,
         [from, to],
       );
       res.json(result.rows);
@@ -136,7 +136,7 @@ app.post(
       }
 
       const inserted = await pool.query<{ id: number }>(
-        "INSERT INTO transactions (date, classification_id, amount) VALUES ($1, $2, $3) RETURNING id",
+        "INSERT INTO transactions (transaction_date, classification_id, amount) VALUES ($1, $2, $3) RETURNING id",
         [date, classificationId, amount],
       );
       const created = await findTransaction(inserted.rows[0].id);
@@ -244,7 +244,7 @@ app.put(
 
       const updated = await pool.query<{ id: number }>(
         `UPDATE transactions
-       SET date = $1, classification_id = $2, amount = $3
+       SET transaction_date = $1, classification_id = $2, amount = $3
        WHERE id = $4
        RETURNING id`,
         [date, classificationId, amount, id],
@@ -332,4 +332,7 @@ app.get(
 
 app.listen(env.APP_PORT, (): void => {
   console.log(`Server running at http://localhost:${env.APP_PORT}`);
+}).on("error", (err): void => {
+  console.error(err.message);
+  process.exit(1);
 });
