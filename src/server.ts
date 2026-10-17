@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { pool } from "./db.ts";
+import { pool } from "./db.js";
 import {
   classificationSchema,
   transactionSchema,
