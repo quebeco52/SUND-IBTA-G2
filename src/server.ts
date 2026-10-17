@@ -1,5 +1,5 @@
-import express, { Request, Response } from "express";
-import { pool } from "./db.ts";
+import express, { type Request, type Response } from "express";
+import { pool } from "./db.js";
 import {
   classificationSchema,
   transactionSchema,
@@ -7,6 +7,7 @@ import {
   idParamSchema,
 } from "./schemas.js";
 import { env } from "process";
+import type { ZodError } from "zod";
 
 const app = express();
 app.use(express.json());
@@ -41,6 +42,10 @@ function handleError(res: Response, err: unknown): void {
   res.status(500).json({ error: "Database error" });
 }
 
+function firstIssue(error: ZodError): string {
+  return error.issues[0]?.message ?? "Invalid input";
+}
+
 async function findTransaction(id: number): Promise<Transaction | undefined> {
   const result = await pool.query<Transaction>(
     `${SELECT_TRANSACTIONS} WHERE t.id = $1`,
@@ -54,7 +59,7 @@ async function findClassificationId(recipient: string): Promise<number | null> {
     "SELECT id FROM classifications WHERE recipient = $1",
     [recipient],
   );
-  return result.rows.length > 0 ? result.rows[0].id : null;
+  return result.rows[0]?.id ?? null;
 }
 
 app.get("/transactions", async (req: Request, res: Response): Promise<void> => {
@@ -74,7 +79,7 @@ app.get(
   async (req: Request, res: Response): Promise<void> => {
     const safeQuery = filterSchema.safeParse(req.query);
     if (!safeQuery.success) {
-      res.status(400).json({ error: safeQuery.error.issues[0].message });
+      res.status(400).json({ error: firstIssue(safeQuery.error) });
       return;
     }
     const { from, to } = safeQuery.data;
@@ -96,7 +101,7 @@ app.get(
   async (req: Request, res: Response): Promise<void> => {
     const safeParams = idParamSchema.safeParse(req.params);
     if (!safeParams.success) {
-      res.status(400).json({ error: safeParams.error.issues[0].message });
+      res.status(400).json({ error: firstIssue(safeParams.error) });
       return;
     }
     const { id } = safeParams.data;
@@ -123,7 +128,7 @@ app.post(
   async (req: Request, res: Response): Promise<void> => {
     const safeBody = transactionSchema.safeParse(req.body);
     if (!safeBody.success) {
-      res.status(400).json({ error: safeBody.error.issues[0].message });
+      res.status(400).json({ error: firstIssue(safeBody.error) });
       return;
     }
     const { date, recipient, amount } = safeBody.data;
@@ -139,7 +144,7 @@ app.post(
         "INSERT INTO transactions (transaction_date, classification_id, amount) VALUES ($1, $2, $3) RETURNING id",
         [date, classificationId, amount],
       );
-      const created = await findTransaction(inserted.rows[0].id);
+      const created = await findTransaction(inserted.rows[0]!.id);
       res.status(201).json(created);
     } catch (err) {
       handleError(res, err);
@@ -152,7 +157,7 @@ app.post(
   async (req: Request, res: Response): Promise<void> => {
     const safeBody = classificationSchema.safeParse(req.body);
     if (!safeBody.success) {
-      res.status(400).json({ error: safeBody.error.issues[0].message });
+      res.status(400).json({ error: firstIssue(safeBody.error) });
       return;
     }
     const { recipient, classification } = safeBody.data;
@@ -181,7 +186,7 @@ app.delete(
   async (req: Request, res: Response): Promise<void> => {
     const safeParams = idParamSchema.safeParse(req.params);
     if (!safeParams.success) {
-      res.status(400).json({ error: safeParams.error.issues[0].message });
+      res.status(400).json({ error: firstIssue(safeParams.error) });
       return;
     }
     const { id } = safeParams.data;
@@ -191,12 +196,12 @@ app.delete(
         "DELETE FROM classifications WHERE id = $1 RETURNING id, recipient, classification",
         [id],
       );
-      if (result.rows.length === 0) {
+      const deleted = result.rows[0];
+      if (!deleted) {
         res.status(404).json({ error: "Classification not found" });
         return;
       }
 
-      const deleted = result.rows[0];
       res.json({
         message: `Classification "${deleted.recipient}" (${deleted.classification}) was deleted.`,
       });
@@ -219,7 +224,7 @@ app.put(
   async (req: Request, res: Response): Promise<void> => {
     const safeParams = idParamSchema.safeParse(req.params);
     if (!safeParams.success) {
-      res.status(400).json({ error: safeParams.error.issues[0].message });
+      res.status(400).json({ error: firstIssue(safeParams.error) });
       return;
     }
     const { id } = safeParams.data;
@@ -230,7 +235,7 @@ app.put(
 
     const safeBody = transactionSchema.safeParse(req.body);
     if (!safeBody.success) {
-      res.status(400).json({ error: safeBody.error.issues[0].message });
+      res.status(400).json({ error: firstIssue(safeBody.error) });
       return;
     }
     const { date, recipient, amount } = safeBody.data;
@@ -265,7 +270,7 @@ app.delete(
   async (req: Request, res: Response): Promise<void> => {
     const safeParams = idParamSchema.safeParse(req.params);
     if (!safeParams.success) {
-      res.status(400).json({ error: safeParams.error.issues[0].message });
+      res.status(400).json({ error: firstIssue(safeParams.error) });
       return;
     }
     const { id } = safeParams.data;
@@ -309,7 +314,7 @@ app.get(
   async (req: Request, res: Response): Promise<void> => {
     const safeParams = idParamSchema.safeParse(req.params);
     if (!safeParams.success) {
-      res.status(400).json({ error: safeParams.error.issues[0].message });
+      res.status(400).json({ error: firstIssue(safeParams.error) });
       return;
     }
     const { id } = safeParams.data;
