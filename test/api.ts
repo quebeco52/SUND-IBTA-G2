@@ -8,26 +8,51 @@ try {
 }
 
 let failures = 0;
+let testNumber = 0;
 const check = (ok: boolean) => {
-  console.log(ok ? "PASS" : "FAIL");
+  testNumber++;
+  console.log(`${testNumber}. ${ok ? "PASS" : "FAIL"}`);
   if (!ok) failures++;
 };
 
-const get = async (path: string) => {
-  console.log(`GET ${path}`);
-  const res = await fetch(`${BASE}${path}`);
-  const data = await res.json();
-  return { status: res.status, data };
+const req = async (method: string, path: string, body?: any) => {
+  console.log(`${method} ${path}`);
+  const res = await fetch(`${BASE}${path}`, {
+    method,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  return { status: res.status, data: await res.json().catch(() => null) };
 };
 
-// visa alla transaktioner
-check(Array.isArray((await get("/transactions")).data));
+// Vi skapar en transaktion som vi kan använda i tester, och som tas bort på slutet
+const trans = await req("POST", "/transactions", {
+  date: "2026-10-18",
+  recipient: "ICA",
+  amount: 500,
+});
+check(trans.status === 201);
 
-// visa transaktion 1 (finns)
-check((await get("/transactions/1")).status === 200);
-// visa trasaktion 9999999 (finns ej)
-check((await get("/transactions/9999999")).status === 404);
+const transID = trans.data?.id;
+if (transID == null) {
+  console.log("Could not create transaction, aborting.");
+  process.exit(1);
+}
 
-// fyll på här...
+// GET /transactions
+check(Array.isArray((await req("GET", "/transactions")).data));
+
+// GET /transactions/:id
+check((await req("GET", `/transactions/${transID}`)).status === 200);
+check((await req("GET", "/transactions/9999999")).status === 404);
+
+// GET /classifications
+check(Array.isArray((await req("GET", "/classifications")).data));
+check((await req("GET", "/classifications/1")).status === 200);
+check((await req("GET", "/classifications/9999999")).status === 404);
+
+// DELETE /transactions/:id
+check((await req("DELETE", `/transactions/${transID}`)).status === 204);
+check((await req("DELETE", "/transactions/9999999")).status === 404);
 
 console.log(`Total failures: ${failures}`);
