@@ -13,5 +13,13 @@ export default defineConfig([
         ...globals.node,
       },
     },
+    rules: {
+      "@typescript-eslint/no-unused-vars": "error", // catch unused variables
+      curly: "error",
+      semi: ["error", "always"],
+      quotes: ["error", "double"],
+      indent: ["error", 2],
+      "object-curly-spacing": ["error", "always"],
+    },
   },
 ]);
