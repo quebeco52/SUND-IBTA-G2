@@ -12,10 +12,10 @@ let testNumber = 0;
 const check = (ok: boolean) => {
   testNumber++;
   console.log(`${testNumber}. ${ok ? "PASS" : "FAIL"}`);
-  if (!ok) failures++;
+  if (!ok) { failures++; }
 };
 
-const req = async (method: string, path: string, body?: any) => {
+const req = async (method: string, path: string, body?: unknown) => {
   console.log(`${method} ${path}`);
   const res = await fetch(`${BASE}${path}`, {
     method,
