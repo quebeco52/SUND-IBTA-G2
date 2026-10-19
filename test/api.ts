@@ -10,7 +10,7 @@ try {
 let failures = 0;
 const check = (ok: boolean) => {
   console.log(ok ? "PASS" : "FAIL");
-  if (!ok) failures++;
+  if (!ok) {failures++;}
 };
 
 const get = async (path: string) => {
