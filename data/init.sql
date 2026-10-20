@@ -25,14 +25,14 @@ CREATE INDEX transactions_classification_id_idx
 INSERT INTO classifications (id, recipient, classification) VALUES
     (1,  'ICA',              'Food'),
     (2,  'SL',               'Transport'),
-    (3,  'Systembolaget',    'Alcohol'),
-    (4,  'Apoteket Hjärtat', 'Health'),
-    (5,  'Telia',            'Telecom'),
-    (6,  'H&M',              'Clothing'),
-    (7,  'IKEA',             'Furniture'),
-    (8,  'Circle K',         'Fuel'),
-    (9,  'Max',              'Restaurants'),
-    (10, 'Elgiganten',       'Electronics');
+    (3,  'Systembolaget',    'Entertainment'),
+    (4,  'Apoteket Hjärtat', 'Household'),
+    (5,  'Telia',            'Household'),
+    (6,  'H&M',              'Household'),
+    (7,  'IKEA',             'Household'),
+    (8,  'Circle K',         'Transport'),
+    (9,  'Max',              'Food'),
+    (10, 'Elgiganten',       'Household');
 
 INSERT INTO transactions (transaction_date, classification_id, amount) VALUES
     ('2026-09-01', 1,  -342.00),  -- ICA
