@@ -92,7 +92,7 @@ async function main() {
         console.table([
           {
             ...data,
-            classification: data.classification ?? "Unknown",
+            category: data.category ?? "Unknown",
           },
         ]);
       } catch (error) {
@@ -115,7 +115,7 @@ async function main() {
         console.table([
           {
             ...data,
-            classification: data.classification ?? "Unknown",
+            category: data.category ?? "Unknown",
           },
         ]);
 

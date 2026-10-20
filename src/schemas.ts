@@ -13,7 +13,7 @@ export const transactionSchema = z.object({
 export const classificationSchema = z.object({
   //.trim() stops values like " ICA " from slipping in, which matters because recipient is UNIQUE
   recipient: z.string().trim().min(1, "Recipient is required."),
-  classification: z.string().trim().min(1, "Classification is required."),
+  category: z.string().trim().min(1, "Category is required."),
 });
 
 export const filterSchema = z.object({

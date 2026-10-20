@@ -17,23 +17,23 @@ type Transaction = {
   date: string;
   recipient: string;
   amount: number;
-  classification: string;
+  category: string;
 };
 
 type Classification = {
   id: number;
   recipient: string;
-  classification: string;
+  category: string;
 };
 
-// Shared query: joins in recipient and classification, returns the date as
+// Shared query: joins in recipient and category, returns the date as
 // 'yyyy-mm-dd' text and the amount as a number
 const SELECT_TRANSACTIONS = `
   SELECT t.id,
          to_char(t.transaction_date, 'YYYY-MM-DD') AS date,
          c.recipient,
          t.amount::float8 AS amount,
-         c.classification
+         c.category
   FROM transactions t
   JOIN classifications c ON t.classification_id = c.id`;
 
@@ -160,14 +160,14 @@ app.post(
       res.status(400).json({ error: firstIssue(safeBody.error) });
       return;
     }
-    const { recipient, classification } = safeBody.data;
+    const { recipient, category } = safeBody.data;
 
     try {
       const result = await pool.query<Classification>(
-        `INSERT INTO classifications (recipient, classification)
+        `INSERT INTO classifications (recipient, category)
        VALUES ($1, $2)
-       RETURNING id, recipient, classification`,
-        [recipient, classification],
+       RETURNING id, recipient, category`,
+        [recipient, category],
       );
       res.status(201).json(result.rows[0]);
     } catch (err) {
@@ -193,7 +193,7 @@ app.delete(
 
     try {
       const result = await pool.query<Classification>(
-        "DELETE FROM classifications WHERE id = $1 RETURNING id, recipient, classification",
+        "DELETE FROM classifications WHERE id = $1 RETURNING id, recipient, category",
         [id],
       );
       const deleted = result.rows[0];
@@ -203,7 +203,7 @@ app.delete(
       }
 
       res.json({
-        message: `Classification "${deleted.recipient}" (${deleted.classification}) was deleted.`,
+        message: `Classification "${deleted.recipient}" (${deleted.category}) was deleted.`,
       });
     } catch (err) {
       // 23503 = foreign key violation: transactions still point to this row
@@ -300,7 +300,7 @@ app.get(
   async (req: Request, res: Response): Promise<void> => {
     try {
       const result = await pool.query<Classification>(
-        "SELECT id, recipient, classification FROM classifications ORDER BY id",
+        "SELECT id, recipient, category FROM classifications ORDER BY id",
       );
       res.json(result.rows);
     } catch (err) {
@@ -321,7 +321,7 @@ app.get(
 
     try {
       const result = await pool.query<Classification>(
-        "SELECT id, recipient, classification FROM classifications WHERE id = $1",
+        "SELECT id, recipient, category FROM classifications WHERE id = $1",
         [id],
       );
       if (result.rows.length === 0) {
