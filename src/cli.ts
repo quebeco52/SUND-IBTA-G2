@@ -2,6 +2,22 @@ import { input, number, select } from "@inquirer/prompts";
 
 const base = "http://localhost:3000";
 
+async function ensureClassification(recipient: string): Promise<void> {
+  const response = await fetch(`${base}/classifications`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ recipient, category: "Unknown" }),
+  });
+
+  // 409 = recipient already exists, which is fine
+  if (response.ok || response.status === 409) {
+    return;
+  }
+
+  const data = await response.json();
+  throw new Error(data.error ?? `Request failed (${response.status})`);
+}
+
 async function main() {
   while (true) {
     console.clear();
@@ -72,13 +88,17 @@ async function main() {
 
       const amount = await number({ message: "Amount:", required: true });
 
+      const trimmedRecipient = recipient.trim();
+
       try {
+        await ensureClassification(trimmedRecipient);
+
         const response = await fetch(`${base}/transactions`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ date, recipient: recipient.trim(), amount }),
+          body: JSON.stringify({ date, recipient: trimmedRecipient, amount }),
         });
 
         const data = await response.json();
@@ -134,12 +154,15 @@ async function main() {
           default: data.amount,
         });
 
+        const trimmedRecipient = recipient.trim();
+        await ensureClassification(trimmedRecipient);
+
         const updateResponse = await fetch(`${base}/transactions/${id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ date, recipient, amount }),
+          body: JSON.stringify({ date, recipient: trimmedRecipient, amount }),
         });
         const updateData = await updateResponse.json();
         if (!updateResponse.ok) {
