@@ -10,12 +10,17 @@ export const transactionSchema = z.object({
     .max(9_999_999_999, "Amount is out of range."),
 });
 
+export const CATEGORIES = [
+  "Household",
+  "Transport",
+  "Food",
+  "Entertainment",
+  "Unknown",
+] as const;
+
 export const categorySchema = z.preprocess(
   (value) => (typeof value === "string" ? value.trim() : value),
-  z.enum(
-    ["Household", "Transport", "Food", "Entertainment", "Unknown"],
-    "Category must be one of: Household, Transport, Food, Entertainment, Unknown.",
-  ),
+  z.enum(CATEGORIES, `Category must be one of: ${CATEGORIES.join(", ")}.`),
 );
 
 export const classificationSchema = z.object({
