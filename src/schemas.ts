@@ -10,10 +10,23 @@ export const transactionSchema = z.object({
     .max(9_999_999_999, "Amount is out of range."),
 });
 
+export const CATEGORIES = [
+  "Household",
+  "Transport",
+  "Food",
+  "Entertainment",
+  "Unknown",
+] as const;
+
+export const categorySchema = z.preprocess(
+  (value) => (typeof value === "string" ? value.trim() : value),
+  z.enum(CATEGORIES, `Category must be one of: ${CATEGORIES.join(", ")}.`),
+);
+
 export const classificationSchema = z.object({
   //.trim() stops values like " ICA " from slipping in, which matters because recipient is UNIQUE
   recipient: z.string().trim().min(1, "Recipient is required."),
-  classification: z.string().trim().min(1, "Classification is required."),
+  category: categorySchema,
 });
 
 export const filterSchema = z.object({
