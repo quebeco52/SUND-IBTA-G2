@@ -1,19 +1,24 @@
 import { z } from "zod";
 
+export const classificationEnum = z.enum([
+  "Household",
+  "Transport",
+  "Food",
+  "Entertainment",
+  "Unknown",
+]);
+
+export type ClassificationCategory = z.infer<typeof classificationEnum>;
+
 export const transactionSchema = z.object({
   date: z.iso.date("Invalid date, expected yyyy-mm-dd."),
-  recipient: z.string().min(1, "Recipient is required."),
+  recipient: z.string().trim().min(1, "Recipient is required."),
   amount: z
     .number("Amount must be a number.")
     .int("Amount must be an integer.")
     .min(-9_999_999_999, "Amount is out of range.")
     .max(9_999_999_999, "Amount is out of range."),
-});
-
-export const classificationSchema = z.object({
-  //.trim() stops values like " ICA " from slipping in, which matters because recipient is UNIQUE
-  recipient: z.string().trim().min(1, "Recipient is required."),
-  classification: z.string().trim().min(1, "Classification is required."),
+  classification: classificationEnum.default("Unknown"),
 });
 
 export const filterSchema = z.object({
@@ -26,5 +31,5 @@ export const idParamSchema = z.object({
     .number("Invalid id.")
     .int("Invalid id.")
     .positive("Invalid id.")
-    .max(2_147_483_647, "Invalid id."), // the largest value an INT column can hold
+    .max(2_147_483_647, "Invalid id."),
 });
